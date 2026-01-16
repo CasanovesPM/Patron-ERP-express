@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../LoginContext';
-import { db, collection, query, where, getDocs } from '../../firebaseConfig'; // Importamos las funciones necesarias de Firebase
+import { db, collection, query, where, getDocs } from '../../firebaseConfig';
 
 const CmpLogin = ({ setShowHeader }) => {
-  const { user } = useAuth();  // Obtenemos el usuario autenticado con Firebase Authentication
-  const userId = user.uid;  // UID del usuario autenticado
-  setShowHeader(false);  // Ocultamos el header (seguramente lo haces para no mostrarlo en el login)
+  const { user } = useAuth();
+  const userId = user?.uid;
+  setShowHeader(false);
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -28,14 +28,19 @@ const CmpLogin = ({ setShowHeader }) => {
   const handleLogin = async (e) => {
     e.preventDefault();
 
+    if (!userId) {
+      setErrorMessage('Usuario no autenticado. Por favor inicia sesión primero.');
+      return;
+    }
+
     try {
-      // Conexión directa con Firestore para obtener los datos del usuario
-      const usuariosRef = collection(db, `users/${userId}/Usuarios`);  // Accedemos a la colección de usuarios
-      const q = query(usuariosRef, where('email', '==', email), where('password', '==', password)); // Creamos la consulta
-      const snapshot = await getDocs(q);  // Ejecutamos la consulta
+      // Buscar usuario en localStorage usando la estructura simulada de Firestore
+      const usuariosRef = collection(db, `users/${userId}/Usuarios`);
+      const q = query(usuariosRef, where('email', '==', email), where('password', '==', password));
+      const snapshot = await getDocs(q);
 
       if (!snapshot.empty) {
-        const userData = snapshot.docs[0].data();  // Obtenemos los datos del primer documento que coincida
+        const userData = snapshot.docs[0].data();
 
         // Verificamos el nivel del usuario
         if (userData.nivel === 0 || userData.nivel === 1 || userData.nivel === 2) {
@@ -49,14 +54,14 @@ const CmpLogin = ({ setShowHeader }) => {
 
           navigate('/dashboard', { state: { nivel: userData.nivel, empleado: userData.nombre } });
         } else {
-          setErrorMessage('You do not have the correct permissions.');
+          setErrorMessage('No tienes los permisos correctos.');
         }
       } else {
-        setErrorMessage('Invalid email or password');
+        setErrorMessage('Email o contraseña inválidos');
       }
     } catch (error) {
       console.error('Error occurred during login:', error);
-      setErrorMessage('Error occurred during login. Please try again.');
+      setErrorMessage('Ocurrió un error durante el inicio de sesión. Por favor intenta de nuevo.');
     }
   };
 

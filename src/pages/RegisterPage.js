@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Swal from 'sweetalert2';
-import { auth, db, createUserWithEmailAndPassword, setDoc, doc } from '../firebaseConfig'; // Asegúrate de importar correctamente Firebase
+import { auth, db, createUserWithEmailAndPassword, setDoc, doc } from '../firebaseConfig';
 
 function RegisterPage() {
   const [nombre, setNombre] = useState('');
@@ -27,13 +27,13 @@ function RegisterPage() {
     }
 
     try {
-      // Crear el usuario en Firebase Authentication
+      // Crear el usuario usando localStorage
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
       // Obtener el usuario creado
       const user = userCredential.user;
 
-      // Guardar los datos adicionales en Firestore (base de datos de Firebase)
+      // Guardar los datos adicionales en localStorage (simulando Firestore)
       await setDoc(doc(db, 'users', user.uid), {
         nombre,
         apellido,
@@ -41,6 +41,7 @@ function RegisterPage() {
         pais,
         telefono,
         email,
+        firstTime: true, // Inicializar como primera vez
       });
 
       // Mostrar mensaje de éxito

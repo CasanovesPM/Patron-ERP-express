@@ -1,16 +1,18 @@
 // Informacion.js
 import React, { useEffect, useState} from 'react';
-import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js';
-import { auth, db } from '../../firebaseConfig';
+import { doc, getDoc, auth, db } from '../../firebaseConfig';
+import { useAuth } from '../../LoginContext';
+
 const Informacion = ({userId}) => {
 
     const [userData, setUserData] = useState(null);
+    const { user } = useAuth();
 
     useEffect(() => {
         const fetchUserData = async () => {
-          const user = auth.currentUser;
-          if (user) {
-            const docRef = doc(db, "users", user.uid);
+          const currentUser = user || auth.currentUser;
+          if (currentUser && currentUser.uid) {
+            const docRef = doc(db, "users", currentUser.uid);
             const docSnap = await getDoc(docRef);
             if (docSnap.exists()) {
               setUserData(docSnap.data());
@@ -20,7 +22,7 @@ const Informacion = ({userId}) => {
           }
         };
         fetchUserData();
-      }, []);
+      }, [user]);
 
   return (
     <div className="container p-3">

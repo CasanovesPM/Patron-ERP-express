@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Swal from 'sweetalert2';
 import { Trash, PencilSquare } from 'react-bootstrap-icons';
-import { doc, setDoc, getDocs, getDoc, collection, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-import { db } from '../../firebaseConfig'; // Asegúrate de que esta ruta sea correcta
+import { doc, setDoc, getDocs, getDoc, collection, deleteDoc, updateDoc, db } from '../../firebaseConfig';
 
 const Proveedores = ({ nivel, userId }) => {
   const [nivels, setNivel] = useState(nivel.toString());

@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import Swal from 'sweetalert2';
-import { doc, setDoc , updateDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-import { db } from '../../firebaseConfig'; // Asegúrate de que esta ruta sea correcta
+import { doc, setDoc, updateDoc } from '../../firebaseConfig';
+import { db } from '../../firebaseConfig';
 import { useAuth } from '../../LoginContext';
 
-const RegisterLogin = () => {
+const RegisterLogin = ({ onSuperUserCreated }) => {
 
-    const { userId } = useAuth();
+    const { user } = useAuth();
+    const userId = user?.uid;
 
     const [form, setForm] = useState({
         nombre: '',
@@ -36,37 +37,46 @@ const RegisterLogin = () => {
                 }
             });
 
+            if (!userId) {
+              throw new Error('Usuario no autenticado');
+            }
+
             const docRef = doc(db, `users/${userId}/Usuarios/${form.nombre}`);
             await setDoc(docRef, { ...form });
 
-            // Actualizar el campo firstTime a true
+            // Actualizar el campo firstTime a false
             const userDocRef = doc(db, `users/${userId}`);
             await updateDoc(userDocRef, { firstTime: false });
+
+            // Limpiar el formulario
+            setForm({
+              nombre: '',
+              fechaNacimiento: '',
+              dni: '',
+              direccion: '',
+              localidad: '',
+              email: '',
+              password: '',
+              nivel: 0
+            });
 
             // Cierra el Swal de carga
             Swal.close();
 
-            // Muestra el Swal de éxito y refresca la página al presionar "OK"
+            // Muestra el Swal de éxito y luego actualiza el estado del componente padre
             Swal.fire({
                 title: 'Super Usuario agregado con éxito',
+                text: 'Ahora puedes iniciar sesión con tu usuario',
                 icon: 'success',
-                confirmButtonText: 'OK'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.reload(); // Refresca la página
+                confirmButtonText: 'Continuar',
+                timer: 2000,
+                timerProgressBar: true
+            }).then(() => {
+                // Llamar al callback para actualizar el estado en UserLogin
+                if (onSuperUserCreated) {
+                  onSuperUserCreated();
                 }
             });
-
-          setForm({
-            nombre: '',
-            fechaNacimiento: '',
-            dni: '',
-            direccion: '',
-            localidad: '',
-            email: '',
-            password: '',
-            nivel: ''
-          });
         } catch (error) {
           console.error("Error al agregar Super Usuario:", error);
           Swal.fire('Error al agregar el Super Usuario', '', 'error');

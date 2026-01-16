@@ -1,6 +1,5 @@
 // putInfo.js
-import {  doc, setDoc } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js';
-import { db } from '../../firebaseConfig'; // Asegúrate de que esta ruta sea correcta
+import { doc, setDoc, db } from '../../firebaseConfig';
 import moment from 'moment';
 
 const putInfoSetBanco = async (userId, bancoPresente) => {
