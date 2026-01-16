@@ -8,6 +8,7 @@ import MainContent from '../components/MainContent';
 function Dashboard({setShowHeader}) {
   
   const location = useLocation();
+  const navigate = useNavigate();
 
   const nivel = location.state?.nivel;
   const empleado = location.state?.empleado;
@@ -38,26 +39,34 @@ function Dashboard({setShowHeader}) {
         }
       }, [isLoggedIn, setShowHeader]);
   
-  const Navigate = useNavigate();
+  // Redirigir si el usuario no está autenticado
+  useEffect(() => {
+    if (!isLoggedIn) {
+      navigate('/');
+    }
+  }, [isLoggedIn, navigate]);
 
 
 
 
-  return isLoggedIn ? (
+  // No renderizar nada si el usuario no está autenticado (la redirección se maneja en useEffect)
+  if (!isLoggedIn) {
+    return null;
+  }
+
+  return (
     <>
-    <div className="dashboard-container">
-      <Sidebar
-        selectedOption={selectedOption}
-        setSelectedOption={setSelectedOption}
-        setShowHeader={setShowHeader} 
-        nivel = {nivel}
-      />
-      <MainContent nivel = {nivel} empleado = {empleado} selectedOption={selectedOption}
+      <div className="dashboard-container">
+        <Sidebar
+          selectedOption={selectedOption}
+          setSelectedOption={setSelectedOption}
+          setShowHeader={setShowHeader} 
+          nivel = {nivel}
         />
-    </div>
-</>
-  ) : (
-    <Navigate to="/" />
+        <MainContent nivel = {nivel} empleado = {empleado} selectedOption={selectedOption}
+          />
+      </div>
+    </>
   );
 
 }

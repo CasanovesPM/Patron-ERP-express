@@ -17,7 +17,7 @@ function Header() {
   };
 
   const handleDashboard = () => {
-    navigate('/userLogin');
+    navigate('/userlogin');
   };
   return (
 <header>

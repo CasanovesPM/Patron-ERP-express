@@ -33,7 +33,7 @@ function LoginPage({ setShowHeader }) {
           confirmButtonText: 'Continuar',
         }).then((result) => {
           if (result.isConfirmed) {
-            navigate('/userLogin');
+            navigate('/userlogin');
           }
         });
       } else {

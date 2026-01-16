@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import Swal from 'sweetalert2';
+import { useNavigate } from 'react-router-dom';
 import { auth, db, createUserWithEmailAndPassword, setDoc, doc } from '../firebaseConfig';
 
 function RegisterPage() {
+  const navigate = useNavigate();
   const [nombre, setNombre] = useState('');
   const [apellido, setApellido] = useState('');
   const [organizacion, setOrganizacion] = useState('');
@@ -52,8 +54,8 @@ function RegisterPage() {
         confirmButtonText: 'OK',
       }).then((result) => {
         if (result.isConfirmed) {
-          // Redirigir al login después del registro
-          window.location.href = '/login';
+          // Redirigir al login después del registro usando HashRouter
+          navigate('/login');
         }
       });
     } catch (error) {
