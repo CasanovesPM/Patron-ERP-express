@@ -1,0 +1,151 @@
+  @media (max-width: 600px) {
+    .login-container {
+      height: auto;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+    }
+
+    .login-container button {
+      border-radius: 25px;
+      background-color: #ff9802;
+    }
+    
+    .login-card {
+      width: 80%;
+      height: auto;
+      background: #fff;
+      border-radius: 10px;
+    }
+    
+    .login-card .form-control {
+      border-radius: 25px;
+      padding: 10px 20px;
+    }
+    
+    .login-card h2 {
+      font-weight: 600;
+      color: #333;
+    }
+    
+    .login-card .btn-primary {
+      border-radius: 25px;
+      background: #ff9802;
+      border: none;
+      padding: 10px;
+      transition: background 0.3s;
+    }
+    
+    .login-card .btn-primary:hover {
+      background: #ff9802;
+    }
+    
+    .login-card .link-primary {
+      color: #ff9802;
+    }
+    
+    .login-card .link-secondary {
+      color: #888;
+    }
+  
+    .inputsLogin {
+      text-align: center;
+    }
+  
+    .child-div-rl {
+      width: 40%;
+      height: auto;
+      text-align: center;
+      padding: 1%;
+      background-color: #ff9802;
+      border-radius: 15px 0px 15px 0px;
+      color: white;
+    }
+  
+    .child-div-rl button{
+      text-align: center;
+      padding: 1%;
+      border-radius: 15px 0px 15px 0px;
+    }
+
+    .imgUserLogin img{
+      width: 80%;
+      height: auto;
+    }
+  }
+  @media (min-width: 601px) and (max-width: 1024px) {
+  }
+  @media (min-width: 1024px) {
+    .login-container {
+      height: auto;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+    }
+    
+    .login-card {
+      width: 40%;
+      height: auto;
+      background: #fff;
+      border-radius: 10px;
+    }
+    
+    .login-card .form-control {
+      border-radius: 25px;
+      padding: 10px 20px;
+    }
+    
+    .login-card h2 {
+      font-weight: 600;
+      color: #333;
+    }
+    
+    .login-card .btn-primary {
+      border-radius: 25px;
+      background: #ff9802;
+      border: none;
+      padding: 10px;
+      transition: background 0.3s;
+    }
+    
+    .login-card .btn-primary:hover {
+      background: #ff9802;
+    }
+    
+    .login-card .link-primary {
+      color: #ff9802;
+    }
+    
+    .login-card .link-secondary {
+      color: #888;
+    }
+  
+    .inputsLogin {
+      text-align: center;
+    }
+  
+    .child-div-rl {
+      width: 40%;
+      height: auto;
+      text-align: center;
+      padding: 1%;
+      background-color: #ff9802;
+      border-radius: 15px 0px 15px 0px;
+      color: white;
+    }
+  
+    .child-div-rl button{
+      text-align: center;
+      padding: 1%;
+      border-radius: 15px 0px 15px 0px;
+    }
+
+    .imgUserLogin img{
+      width: 50%;
+      height: auto;
+    }
+  }

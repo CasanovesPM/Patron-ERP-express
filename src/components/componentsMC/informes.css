@@ -1,0 +1,8 @@
+.card {
+  background-color: #fdfdfd;
+  border-radius: 10px;
+}
+input[readonly] {
+  background-color: #f8f9fa;
+  font-weight: 500;
+}

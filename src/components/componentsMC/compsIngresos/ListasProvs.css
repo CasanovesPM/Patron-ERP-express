@@ -1,0 +1,50 @@
+/* ListasProvs.css */
+
+.container {
+  max-width: 1000px;
+}
+
+h4 {
+  font-size: 1.8rem;
+  color: #333;
+}
+
+label.form-label {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+input[type="file"] {
+  min-width: 260px;
+}
+
+input.form-control::placeholder {
+  color: #999;
+  font-style: italic;
+}
+
+table.table-hover {
+  font-size: 0.95rem;
+}
+
+thead.table-dark th {
+  background-color: #343a40;
+  color: #fff;
+  text-align: center;
+}
+
+tbody td {
+  vertical-align: middle;
+}
+
+.alert-info {
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+@media (max-width: 768px) {
+  .d-flex.flex-wrap {
+    flex-direction: column;
+    align-items: center;
+  }
+}
