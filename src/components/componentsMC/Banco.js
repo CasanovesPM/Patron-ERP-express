@@ -18,7 +18,7 @@ moment.locale('es'); // Establece el idioma a español
 
 const Banco = ({ userId }) => {
   const [bancoPresente, setBancoPresente] = useState('');
-  const [bancoActual, setBancoActual] = useState('');
+  const [bancoActual, setBancoActual] = useState(0);
   const [mostrarEcheqs, setMostrarEcheqs] = useState(true);
   const [hastaEl15, setHastaEl15] = useState('');
   const [hastaElFinal, setHastaElFinal] = useState('');
@@ -39,37 +39,53 @@ const Banco = ({ userId }) => {
   const nombreMesSiguienteCapitalizado = mesSiguiente.charAt(0).toUpperCase() + mesSiguiente.slice(1);
 
 
-// Función para obtener el banco presente desde Firebase
+// Función para obtener el banco presente desde localStorage
 const fetchBancoPresente = async () => {
   try {
     if (!userId) throw new Error('userId no está definido');
 
-    Swal.fire({
-      title: 'Cargando datos...',
-      allowOutsideClick: false,
-      didOpen: () => {
-        Swal.showLoading();
-      }
-    });
+    // Solo mostrar loading si no hay datos previos o es la primera carga
+    const showLoading = bancoActual === 0 || bancoActual === '';
+    
+    if (showLoading) {
+      Swal.fire({
+        title: 'Cargando datos...',
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+    }
 
     // Ahora accedemos al documento específico de bancoPresente
-    const bancoRef = doc(db, 'users', userId, 'Banco', 'bancoInfo');  // Accediendo correctamente a la ruta
+    const bancoRef = doc(db, 'users', userId, 'Banco', 'bancoInfo');
     const bancoDoc = await getDoc(bancoRef);
 
     if (bancoDoc.exists()) {
-      setBancoActual(Number(bancoDoc.data().bancoPresente));
+      const data = bancoDoc.data();
+      const bancoValue = data && data.bancoPresente !== undefined ? Number(data.bancoPresente) : 0;
+      setBancoActual(bancoValue);
     } else {
-      console.log('No se encontró el documento de banco.');
+      // Si no existe, establecer valor por defecto de 0 sin mostrar error
+      setBancoActual(0);
     }
 
-    Swal.close();
+    if (showLoading) {
+      Swal.close();
+    }
   } catch (error) {
-    Swal.fire({
-      title: 'Error',
-      text: 'Hubo un problema al obtener los datos.',
-      icon: 'error',
-      confirmButtonText: 'Aceptar'
-    });
+    Swal.close();
+    // Solo mostrar error si es un error real, no si simplemente no existe el documento
+    if (error.message && !error.message.includes('No se encontró')) {
+      Swal.fire({
+        title: 'Error',
+        text: 'Hubo un problema al obtener los datos.',
+        icon: 'error',
+        confirmButtonText: 'Aceptar'
+      });
+    }
+    // Establecer valor por defecto en caso de error
+    setBancoActual(0);
     console.error("Error al obtener los datos:", error);
   }
 };
@@ -395,6 +411,9 @@ const fetchChequesPorCubrirProximo = async () => {
   // Función para actualizar el banco presente en Firebase
   const handleSetBanco = async (userId, valor) => {
     try {
+      // Convertir el valor a número
+      const valorNumerico = Number(valor) || 0;
+      
       Swal.fire({
         title: 'Actualizando Banco...',
         allowOutsideClick: false,
@@ -403,25 +422,36 @@ const fetchChequesPorCubrirProximo = async () => {
         }
       });
 
-      // Actualizar el valor de bancoPresente en Firestore
-      await setDoc(doc(db, 'users', userId, 'Banco', 'bancoInfo'), { bancoPresente: valor }, { merge: true });
+      // Actualizar el valor de bancoPresente en localStorage
+      const bancoRef = doc(db, 'users', userId, 'Banco', 'bancoInfo');
+      await setDoc(bancoRef, { bancoPresente: valorNumerico }, { merge: true });
 
-      setBancoPresente(valor);
-      await fetchBancoPresente();
+      // Actualizar el estado local directamente sin recargar
+      setBancoActual(valorNumerico);
+      setBancoPresente('');
 
+      // Cerrar el loading antes de mostrar el éxito
       Swal.close();
-      Swal.fire({
+      
+      // Mostrar mensaje de éxito que se cierra automáticamente
+      await Swal.fire({
         title: 'Carga Exitosa',
         text: 'Valor cargado con éxito.',
         icon: 'success',
-        confirmButtonText: 'Aceptar'
+        confirmButtonText: 'Aceptar',
+        timer: 2000,
+        timerProgressBar: true,
+        allowOutsideClick: false
       });
     } catch (error) {
+      Swal.close();
       Swal.fire({
         title: 'Error',
         text: 'Hubo un problema al guardar los datos.',
         icon: 'error',
-        confirmButtonText: 'Aceptar'
+        confirmButtonText: 'Aceptar',
+        timer: 3000,
+        timerProgressBar: true
       });
       console.error('Error al guardar los datos:', error);
     }
@@ -644,7 +674,7 @@ const fetchChequesPorCubrirProximo = async () => {
 
   return (
     <div className="container p-3 panelInfo">
-      <h2>Informacion de Bancos</h2>
+      <h2>Informacion de Bancos / Cheques</h2>
       <div className='infoNubes'>
         <InfoNube
           titulo="Banco"
@@ -663,32 +693,28 @@ const fetchChequesPorCubrirProximo = async () => {
           onClick={() => handleSetBanco(userId, bancoPresente)}
         />
         <div className='infoNube noneInMobile'>
-          <div className='panelBtnNube'>
-          <h5>CHEQUES</h5>
-          <button className="btn btn-success btnNube mt-2"  onClick={handleToggleChequesFisicosTerceros}>
-                      {"ADD TERCEROS"}
-             </button>
-            <button className="btn btn-success btnNube mt-2"  onClick={handleToggleChequesFisicosPropios}>
-                      {"ADD PROPIOS"}
-             </button>
-             <button className="btn btn-success btnNube mt-2"  onClick={handleToggleExcelCheques}>
-                      {"ADD EXCEL"}
-             </button>
+          <div className='panelBtnNube' style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center', justifyContent: 'center', width: '100%', maxWidth: '100%' }}>
+              <button className="btn btn-success btnNube" onClick={handleToggleChequesFisicosTerceros} style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {"CH TERCEROS"}
+              </button>
+              <button className="btn btn-success btnNube" onClick={handleToggleChequesFisicosPropios} style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {"CH PROPIOS"}
+              </button>
+              <button className="btn btn-success btnNube" onClick={handleToggleExcelCheques} style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {"ADD EXCEL"}
+              </button>
+            </div>
           </div>
         </div>
         <div className="infoNube" >
           <div style={{ textAlign: 'center' }}>
-            <h5>CARTERAS</h5>
              <button className="btn btn-success btnNube mt-2"  onClick={handleToggleCartera}>
-                      {"TERCEROS"}
+                      {"CART. TERCEROS"}
              </button>
             <button className="btn btn-success btnNube mt-2" onClick={handleShowECheqs}>
-              {"PROPIOS"}
+              {"CART. PROPIOS"}
             </button>
-            <div className="mt-2">
-              <h5>Total Emitido: {emitidosTodos.toLocaleString('es-AR', { style: 'currency', currency: 'ARS' }) || "Cargando..."}.</h5>
-
-            </div>
           </div>
         </div>
       </div>

@@ -20,23 +20,42 @@ const RegisterLogin = ({ onSuperUserCreated }) => {
         nivel: 0
       });
 
-      // Función para validar formato de email
+      // Función para validar formato de email más estricta
       const validateEmail = (email) => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
+        if (!email || typeof email !== 'string') {
+          return false;
+        }
+        // Eliminar espacios en blanco
+        const trimmedEmail = email.trim();
+        // Regex más estricto: requiere al menos un carácter antes del @, dominio con al menos un punto y extensión de al menos 2 caracteres
+        // Formato: xxx@xxxx.xxx o xxx@xxxx.xxx.xx
+        const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(\.[a-zA-Z]{2,})?$/;
+        return emailRegex.test(trimmedEmail) && trimmedEmail.length > 0;
       };
 
-      const handleAddEmpleado = async () => {
+      const handleAddEmpleado = async (e) => {
+        // Prevenir el comportamiento por defecto del formulario
+        if (e) {
+          e.preventDefault();
+        }
+
+        // Validar campos obligatorios
         if (!form.nombre || !form.email || !form.dni) {
-          Swal.fire('Por favor, completa todos los campos obligatorios.', '', 'error');
+          Swal.fire({
+            title: 'Error',
+            text: 'Por favor, completa todos los campos obligatorios.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          });
           return;
         }
 
-        // Validar formato de email
-        if (!validateEmail(form.email)) {
+        // Validar formato de email ANTES de cualquier otra operación
+        const emailTrimmed = form.email.trim();
+        if (!emailTrimmed || !validateEmail(emailTrimmed)) {
           Swal.fire({
             title: 'Email inválido',
-            text: 'Debe poner un email correcto',
+            text: 'Debe poner un email correcto (ejemplo: usuario@dominio.com)',
             icon: 'error',
             confirmButtonText: 'OK'
           });
@@ -58,8 +77,14 @@ const RegisterLogin = ({ onSuperUserCreated }) => {
               throw new Error('Usuario no autenticado');
             }
 
+            // Usar email sin espacios
+            const formData = {
+              ...form,
+              email: emailTrimmed
+            };
+            
             const docRef = doc(db, `users/${userId}/Usuarios/${form.nombre}`);
-            await setDoc(docRef, { ...form });
+            await setDoc(docRef, formData);
 
             // Actualizar el campo firstTime a false
             const userDocRef = doc(db, `users/${userId}`);
@@ -129,12 +154,21 @@ const RegisterLogin = ({ onSuperUserCreated }) => {
                 <input type="text" className="form-control" id="direccion" placeholder="Dirección" value={form.direccion} onChange={handleInputChange} />
                 </div>
             </form>
-            <form>
+            <form onSubmit={(e) => e.preventDefault()}>
                 <div className="mb-1">
                 <input type="text" className="form-control" id="localidad" placeholder="Localidad" value={form.localidad} onChange={handleInputChange} />
                 </div>
                 <div className="mb-1">
-                <input type="email" className="form-control" id="email" placeholder="Email" value={form.email} onChange={handleInputChange} />
+                <input 
+                  type="email" 
+                  className="form-control" 
+                  id="email" 
+                  placeholder="Email" 
+                  value={form.email} 
+                  onChange={handleInputChange}
+                  pattern="[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
+                  title="Debe ser un email válido (ejemplo: usuario@dominio.com)"
+                />
                 </div>
                 <div className="mb-1">
                 <input type="text" className="form-control" id="password" placeholder="Contraseña" value={form.password} onChange={handleInputChange} />
@@ -147,7 +181,7 @@ const RegisterLogin = ({ onSuperUserCreated }) => {
             </form>
             </div>
             <div style={{ textAlign: 'center' }}>
-            <button type="submit" className="btn btn-success" onClick={handleAddEmpleado}>
+            <button type="button" className="btn btn-success" onClick={handleAddEmpleado}>
                 Agregar Super Usuario
             </button>
             </div>
