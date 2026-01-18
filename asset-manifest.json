@@ -1,0 +1,21 @@
+{
+  "files": {
+    "main.css": "/Patron-ERP-express/static/css/main.c5934623.css",
+    "main.js": "/Patron-ERP-express/static/js/main.43865206.js",
+    "static/js/213.f23a7942.chunk.js": "/Patron-ERP-express/static/js/213.f23a7942.chunk.js",
+    "static/js/732.4c9d8c2e.chunk.js": "/Patron-ERP-express/static/js/732.4c9d8c2e.chunk.js",
+    "static/js/453.432e1b22.chunk.js": "/Patron-ERP-express/static/js/453.432e1b22.chunk.js",
+    "static/media/logo-color.png": "/Patron-ERP-express/static/media/logo-color.2469a1ca1ac7713c3f47.png",
+    "static/media/logo.png": "/Patron-ERP-express/static/media/logo.e341a6ec7fc68cdaa14b.png",
+    "index.html": "/Patron-ERP-express/index.html",
+    "main.c5934623.css.map": "/Patron-ERP-express/static/css/main.c5934623.css.map",
+    "main.43865206.js.map": "/Patron-ERP-express/static/js/main.43865206.js.map",
+    "213.f23a7942.chunk.js.map": "/Patron-ERP-express/static/js/213.f23a7942.chunk.js.map",
+    "732.4c9d8c2e.chunk.js.map": "/Patron-ERP-express/static/js/732.4c9d8c2e.chunk.js.map",
+    "453.432e1b22.chunk.js.map": "/Patron-ERP-express/static/js/453.432e1b22.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.c5934623.css",
+    "static/js/main.43865206.js"
+  ]
+}
