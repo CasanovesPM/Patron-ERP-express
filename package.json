@@ -2,7 +2,7 @@
   "name": "patron-express",
   "version": "0.1.0",
   "private": true,
-"homepage": "https://casanovespm.github.io/patron-express",
+"homepage": "https://CasanovesPM.github.io/Patron-ERP-express",
   "dependencies": {
     "axios": "^1.7.7",
     "bootstrap": "^5.3.7",

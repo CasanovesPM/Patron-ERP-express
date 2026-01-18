@@ -20,9 +20,26 @@ const RegisterLogin = ({ onSuperUserCreated }) => {
         nivel: 0
       });
 
+      // Función para validar formato de email
+      const validateEmail = (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+      };
+
       const handleAddEmpleado = async () => {
         if (!form.nombre || !form.email || !form.dni) {
           Swal.fire('Por favor, completa todos los campos obligatorios.', '', 'error');
+          return;
+        }
+
+        // Validar formato de email
+        if (!validateEmail(form.email)) {
+          Swal.fire({
+            title: 'Email inválido',
+            text: 'Debe poner un email correcto',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          });
           return;
         }
     
